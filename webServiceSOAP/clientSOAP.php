@@ -1,12 +1,17 @@
 <?php
 
 	ini_set("soap.wsdl_cache_enabled","0");
-	$client = new SoapClient("Lecture.wsdl");
-
+	try{
+		$client = new SoapClient("Lecture.wsdl");
+	} catch(Exception $e){
+		echo 'Caught exception: ',  $e->getMessage(), "\n";
+	}
 	
-	echo $client->fnGetHelloClass('S1G2')."<br>";
-	$studInfo = $client->fnGetStudInfo('B03123123');
-	echo $studInfo['strStudName']."<br>";
-	echo $studInfo['strStudGender']."<br>";
-	//" ".$studInfo['strStudGroup']." ".$studInfo['StudYearBirth']." "$studInfo['fltStudCGPA'];
+
+
+	$studInfo = $client->fnGetStudQuery('syiera');
+	echo $studInfo['strFirstName'];
+	echo $studInfo['strLastName'];
+	echo $studInfo['strUserLvl'];
+	echo $studInfo['strLastLogin'];
 ?>

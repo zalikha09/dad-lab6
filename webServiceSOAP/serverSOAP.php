@@ -1,5 +1,5 @@
 <?php
-
+	require_once("redmineDb.php");
 	function fnGetHelloClass($strSubjectCode){
 		return "Hello and welcome to class ".$strSubjectCode;
 	}
@@ -20,10 +20,27 @@
 		}
 	}
 	
+	function fnGetStudQuery($strStudId){
+		$hostAddr = "localhost";
+		$dbName = "mockDB";
+		$dbUser = "root";
+		$dbPwd = "";
+		$dbPort = 3306;
+
+		$dbPDO = new PDO("mysql:host=$hostAddr;dbname=$dbName",$dbUser,$dbPwd);
+		$strQry = "select * from `users`  where login = :login";
+		$stmt   = $dbPDO->prepare($strQry);
+		$stmt->execute(array('login' => $strStudId));
+		$recordSetObj = $stmt->fetch();
+		return array('strFirstName'=>$recordSetObj['firstname'],'strLastName'=>$recordSetObj['lastname'],
+			'strUserLvl'=>$recordSetObj['type'],'strLastLogin'=>$recordSetObj['last_login_on']);
+	}
+	
 	ini_set("soap.wsdl_cache_enabled","0");
-	$server = new SoapServer("Lecture.wsdl");
+	$server = new SoapServer("http://localhost/webServiceSOAP/Lecture.wsdl");
 	$server->addFunction("fnGetHelloClass");
 	$server->addFunction("fnGetNumStudents");
 	$server->addFunction("fnGetStudInfo");
+	$server->addFunction("fnGetStudQuery");
 	$server->handle();
 ?>
